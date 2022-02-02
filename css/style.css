@@ -17,14 +17,15 @@ header{
   justify-content: center;
 }
 
-.tela-inicial-desktop {
-  width: 1024px;
-  margin: 0 auto;
+.tela-inicial, .tela-jogo {
+  width: 100%;
+  padding: 0 10%;
   display: flex;
+  justify-content: center;
   flex-wrap: wrap;
 }
 
-.tela-inicial-desktop div{
+.face{
   width: 117px;
   height: 146px;
   background: #A7E9AF;
@@ -35,37 +36,28 @@ header{
   background-size: 100px 100px;
   background-repeat: no-repeat;
   background-position: center;
+  
+  transition: all .5s;
+  transform-style: preserve-3d;
 }
 
-.tela-inicial-mobile {
-  width: 100%;
-  margin: 0 auto;
+.original{
+  transform: rotateY(0deg);
+}
+
+.carta-verso{
+  transform: rotateY(180deg);
+}
+
+.carta-frente{
+  transform: rotateY(-180deg);
+}
+
+.sumir {
   display: none;
-  align-items: center;
-  flex-direction: column;
-}
-
-.tela-inicial-mobile div{
-  width: 117px;
-  height: 146px;
-  background: #A7E9AF;
-  border: 1px solid #99CEA8;
-  border-radius: 5px;
-  margin: 20px;
-  background-image: url(../imagens/front.png);
-  background-size: 100px 100px;
-  background-repeat: no-repeat;
-  background-position: center;
 }
 
 @media (max-width: 600px) {
-  .tela-inicial-desktop{
-    display: none;
-  }
-  .tela-inicial-mobile{
-    display: flex;
-  }
-
   header{
     font-size: 36px;
     text-align: center;
