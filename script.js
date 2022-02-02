@@ -1,4 +1,8 @@
 let numeroCartas = 0;
+let mminimoCartas = 4;
+let maximoCartas = 14;
+
+let imagens = ["bobrossparrot","explodyparrot","fiestaparrot","metalparrot","revertitparrot","tripletsparrot","unicornparrot"];
 
 function carregarTelaInicial(){
   let tela = document.querySelector(".tela-inicial");
@@ -23,7 +27,7 @@ function validarNumeroCartas (){
 
     numCartasDigitadas = parseFloat(numCartasDigitadas);
 
-    if ( typeof(numCartasDigitadas) != "number" || numCartasDigitadas < 4 || numCartasDigitadas > 14 
+    if ( typeof(numCartasDigitadas) != "number" || numCartasDigitadas < mminimoCartas || numCartasDigitadas > maximoCartas
          || numCartasDigitadas%2 !=0   || !Number.isInteger (numCartasDigitadas) ) {
 
       numCartasDigitadas = pedirNumCartas();
@@ -41,6 +45,22 @@ function validarNumeroCartas (){
 
 validarNumeroCartas ();
 
+function comparador() { 
+	return Math.random() - 0.5; 
+}
+
+function prepararCartas(){ 
+  imagens.sort(comparador);
+  imagens.splice(0, (maximoCartas-numeroCartas)/2 );
+
+  let j = imagens.length;
+
+  for (let i=1; i<= j; i++){
+    imagens.push(imagens[j-i]);
+  }
+  imagens.sort(comparador);
+}
+
 function fecharTelaInicial(){
   document.querySelector(".tela-inicial").classList.add("sumir");
 }
@@ -48,19 +68,20 @@ function fecharTelaInicial(){
 function montarJogo(){
 
   let cartas = document.querySelector(".tela-jogo");
+  let divHtml = "";
 
   cartas.classList.remove("sumir");
 
-  let divHtml = "";
+  prepararCartas();
 
   for (let i = 0; i< numeroCartas; i++ ) {
 
-    divHtml += `<div class="carta" onclick="virarCarta(this)"> 
+    divHtml += `<div class="carta" id="${i}" onclick="virarCarta(this)"> 
                   <div class="original face"></div>
                 </div> `;
 
   }
-
+ 
   cartas.innerHTML = divHtml;
 }
 
@@ -69,8 +90,11 @@ function virarCarta(carta){
   let selecionado = carta.querySelector(".face") ;
 
   if (selecionado.classList.contains("original")){
-    selecionado.classList.add("carta-verso");
-    selecionado.classList.add("carta-frente");
+    /*selecionado.classList.add("carta-verso");
+    selecionado.classList.add("carta-frente");*/
+    selecionado.style.backgroundImage = `url(imagens/${imagens[parseInt(carta.id)]}.gif)`;
+    
+    console.log(carta);
 
     selecionado.classList.remove ("original");
   } else {
