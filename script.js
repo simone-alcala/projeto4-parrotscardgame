@@ -2,13 +2,16 @@ let numeroCartas = 0;
 let mminimoCartas = 4;
 let maximoCartas = 14;
 
-let imagens = ["bobrossparrot","explodyparrot","fiestaparrot","metalparrot","revertitparrot","tripletsparrot","unicornparrot"];
+const imagensLista = ["bobrossparrot","explodyparrot","fiestaparrot","metalparrot","revertitparrot","tripletsparrot","unicornparrot"];
+let imagens = imagensLista;
+let jogadas = 0;
+let cartasCorretas = 0;
 
 function carregarTelaInicial(){
   let tela = document.querySelector(".tela-inicial");
 
   for (let i = 0; i < 12; i++ ) {
-    tela.innerHTML += "<div class='original face'></div>";
+    tela.innerHTML += "<div class='verso face'></div>";
   }
 }
 
@@ -76,32 +79,74 @@ function montarJogo(){
 
   for (let i = 0; i< numeroCartas; i++ ) {
 
-    divHtml += `<div class="carta" id="${i}" onclick="virarCarta(this)"> 
-                  <div class="original face"></div>
+    divHtml += `<div class="carta" onclick="virarCarta(this)"> 
+                  <div class="verso face"> <img src="imagens/${imagens[i]}.gif"> </div>
                 </div> `;
 
   }
- 
+  
   cartas.innerHTML = divHtml;
 }
 
 function virarCarta(carta){
 
+  jogadas ++;
+
   let selecionado = carta.querySelector(".face") ;
 
-  if (selecionado.classList.contains("original")){
-    /*selecionado.classList.add("carta-verso");
-    selecionado.classList.add("carta-frente");*/
-    selecionado.style.backgroundImage = `url(imagens/${imagens[parseInt(carta.id)]}.gif)`;
-    
-    console.log(carta);
+  if (selecionado.classList.contains("verso")){
 
-    selecionado.classList.remove ("original");
-  } else {
-    selecionado.classList.remove("carta-verso");
-    selecionado.classList.remove("carta-frente");
+    selecionado.classList.add("frente");
+    selecionado.classList.remove ("verso"); 
     
-    selecionado.classList.add ("original");
+    selecionado.classList.add("analise");
+    
+    let outraCarta = document.querySelectorAll(".analise");
+
+     if ( outraCarta.length == 2 ){
+
+      if ( outraCarta[0].childNodes[1].getAttribute('src') == outraCarta[1].childNodes[1].getAttribute('src') ){
+
+        outraCarta[0].classList.add("correto");
+        outraCarta[1].classList.add("correto");
+
+        outraCarta[0].classList.remove("analise");
+        outraCarta[1].classList.remove("analise");
+
+        outraCarta[0].parentNode.setAttribute("onclick",null);
+        outraCarta[1].parentNode.setAttribute("onclick",null);
+
+        cartasCorretas += 2;
+
+        if (cartasCorretas == numeroCartas) {
+          alert (`Você ganhou em ${jogadas} jogadas!`);
+        }
+
+      } else{
+        setTimeout ( voltarCartas(outraCarta) , 1000 ); 
+       
+      }
+
+     } 
+    
+
+  } else {
+    selecionado.classList.remove("analise");
+    selecionado.classList.remove("frente");
+    selecionado.classList.add ("verso");
+    
   }
+
+}
+
+function voltarCartas(outraCarta){
+  
+  outraCarta[0].classList.remove("analise");
+  outraCarta[0].classList.remove("frente");
+  outraCarta[0].classList.add ("verso");
+
+  outraCarta[1].classList.remove("analise");
+  outraCarta[1].classList.remove("frente");
+  outraCarta[1].classList.add ("verso");
 
 }

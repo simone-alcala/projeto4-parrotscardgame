@@ -8,7 +8,7 @@ body{
 
 header{
   height: 140px;
-  font-family: Roboto;
+  font-family: 'Roboto', sans-serif;
   font-size: 56px;
   font-weight: 700;
   color: #75B79E;
@@ -32,27 +32,35 @@ header{
   border: 1px solid #99CEA8;
   border-radius: 5px;
   margin: 20px;
-  background-image: url(../imagens/front.png);
   background-size: 100px 100px;
   background-repeat: no-repeat;
   background-position: center;
   
   transition: all .5s;
   transform-style: preserve-3d;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.original{
+.verso{
+  background-image: url(../imagens/front.png);
   transform: rotateY(0deg);
 }
 
-.carta-verso{
-  transform: rotateY(180deg);
+.verso img{
+  display: none;
 }
 
-.carta-frente{
-  /*transform: rotateY(-180deg);*/
-  /*background-image: url(../imagens/metalparrot.gif);*/
+.frente { 
+  transform: rotateY(-180deg);
+}
 
+.frente img{
+  width: 80px;
+  height: 100px;
+  display: block;
 }
 
 .sumir {
