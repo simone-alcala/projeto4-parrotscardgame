@@ -68,19 +68,9 @@ header{
 }
 
 .counter{
-  width: 70px;
-  height: 70px;
-  border-radius: 100%;
-  border: #75B79E 2px solid;
-
   font-size: 22px;
   color: #75B79E;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  margin: 0 auto;
+  margin-left: 80%;
   margin-top: 10px;
 }
 

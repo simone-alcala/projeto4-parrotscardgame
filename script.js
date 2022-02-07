@@ -28,7 +28,8 @@ function validateNumCards(){
 
   while (!validNumber) {
     numTypedCards = Number(numTypedCards);
-    if ( numTypedCards <= minCards || numTypedCards >= maxCards || numTypedCards%2 !== 0 || !Number.isInteger(numTypedCards) || Number.isNaN(numTypedCards) ) {
+
+    if ( !(numTypedCards >= minCards && numTypedCards <= maxCards) || numTypedCards%2 !== 0 || !Number.isInteger(numTypedCards) || Number.isNaN(numTypedCards) ) {
       numTypedCards = askNumCards();
     } else{
       validNumber = true;
@@ -142,7 +143,7 @@ function returnCards(){
       turnedCards[i].classList.remove("review");
       turnedCards[i].classList.remove("front");
       turnedCards[i].classList.add ("back");
-      
+
       turnedCards[i].setAttribute("data-identifier","back-face");
     }
   }
