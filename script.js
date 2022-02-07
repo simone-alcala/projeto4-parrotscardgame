@@ -1,46 +1,40 @@
 
-const imagensLista  = ["bobrossparrot","explodyparrot","fiestaparrot","metalparrot",
+const imagesList = ["bobrossparrot","explodyparrot","fiestaparrot","metalparrot",
                        "revertitparrot","tripletsparrot","unicornparrot"];
-const mminimoCartas = 4;
-const maximoCartas  = 14;
-const contador      = document.querySelector(".contador");
+const minCards   = 4;
+const maxCards   = 14;
+const counter    = document.querySelector(".counter");
 
-let numeroCartas   = null;
-let numJogadas     = null;
-let cartasCorretas = null;
-let cartasViradas  = null;
-let intervalo      = null;
+let numCards     = null;
+let numMoves     = null;
+let rightCards   = null;
+let turnedCards  = null;
+let interval     = null;
 
-function carregarTelaInicial(){
-  let tela = document.querySelector(".tela-inicial");
+function loadInitialBoard (){
+  let board = document.querySelector(".initial-board");
   for (let i = 0; i < 12; i++ ) {
-    tela.innerHTML += "<div class='verso face'></div>";
+    board.innerHTML += "<div class='back face'></div>";
   }
 }
 
-function pedirNumCartas(){
-  return prompt ("Com quantas cartas deseja jogar?");
+function askNumCards(){
+  return prompt ("Com quantas cartas deseja jogar? (4, 6, 8, 10, 12 ou 14)");
 }
 
-function validarNumeroCartas (){
-  let numeroValido = false;
-  let numCartasDigitadas = null;
+function validateNumCards(){
+  let validNumber   = false;
+  let numTypedCards = null;
 
-  while (!numeroValido) {
-    
-    numCartasDigitadas = parseFloat(numCartasDigitadas);
-
-    if ( typeof(numCartasDigitadas) != "number" || numCartasDigitadas < mminimoCartas || numCartasDigitadas > maximoCartas
-         || numCartasDigitadas%2 !=0   || !Number.isInteger (numCartasDigitadas) ) {
-      
-          numCartasDigitadas = pedirNumCartas();
-
+  while (!validNumber) {
+    numTypedCards = Number(numTypedCards);
+    if ( numTypedCards <= minCards || numTypedCards >= maxCards || numTypedCards%2 !== 0 || !Number.isInteger(numTypedCards) || Number.isNaN(numTypedCards) ) {
+      numTypedCards = askNumCards();
     } else{
-
-      numeroValido = true;
-      numeroCartas = numCartasDigitadas;
-      fecharTelaInicial();
-      prepararCartas();    
+      validNumber = true;
+      numCards = numTypedCards;
+      closeInitialBoard();
+      prepareCards();    
     }
   }
 }
@@ -49,148 +43,148 @@ function comparador() {
 	return Math.random() - 0.5; 
 }
 
-function prepararCartas(){ 
-  let cartas  = document.querySelector(".tela-jogo");
-  let imagens = imagensLista.slice();
+function prepareCards(){ 
+  let cards  = document.querySelector(".game-board");
+  let images = imagesList.slice();
   
-  imagens.sort(comparador);
-  imagens.splice(0, (maximoCartas-numeroCartas)/2 );
+  images.sort(comparador);
+  images.splice(0, (maxCards-numCards)/2 );
 
-  let j = imagens.length;
+  let j = images.length;
 
   for (let i=1; i<= j; i++){
-    imagens.push(imagens[j-i]);
+    images.push(images[j-i]);
   }
 
-  imagens.sort(comparador);
-  montarJogo(cartas, imagens);
+  images.sort(comparador);
+  setGame(cards, images);
 }
 
-function fecharTelaInicial(){
-  document.querySelector(".tela-inicial").classList.add("sumir");
+function closeInitialBoard(){
+  document.querySelector(".initial-board").classList.add("delete");
 }
 
-function limparTelaJogo(){
-  let tela = document.querySelector(".tela-jogo");
-  tela.classList.add("sumir");
-  tela.innerHTML="";
+function clearGameBoard(){
+  let board = document.querySelector(".game-board");
+  board.classList.add("delete");
+  board.innerHTML="";
 }
 
-function exibirTelaInicial(){
-  document.querySelector(".tela-inicial").classList.remove("sumir");
+function showInitialBoard (){
+  document.querySelector(".initial-board").classList.remove("delete");
 }
 
-function montarJogo(cartas,imagens){
+function setGame(cards,images){
   let divHtml = "";
-  cartas.classList.remove("sumir");
-  for (let i = 0; i< numeroCartas; i++ ) {
-    divHtml += `<div class="carta" onclick="virarCarta(this)"> 
-                  <div class="verso face"> <img src="imagens/${imagens[i]}.gif" alt="${imagens[i]}.gif"> </div>
+  cards.classList.remove("delete");
+  for (let i = 0; i< numCards; i++ ) {
+    divHtml += `<div onclick="turnCard(this)" data-identifier="card" > 
+                  <div class="back face" data-identifier="back-face" > 
+                    <img src="imagens/${images[i]}.gif" alt="${images[i]}.gif"> 
+                  </div>
                 </div> `;
   }
-  cartas.innerHTML = divHtml;
+  cards.innerHTML = divHtml;
+
 }
 
-function virarCarta(carta){
-  numJogadas ++;
+function turnCard(card){
+  numMoves ++;
+  let selected = card.querySelector(".face") ;
+  if (selected.classList.contains("back")){
+    selected.classList.add("front");
+    selected.classList.remove ("back"); 
+    selected.classList.add("review");
 
-  let selecionado = carta.querySelector(".face") ;
+    selected.setAttribute("data-identifier","front-face");
 
-  if (selecionado.classList.contains("verso")){
-    selecionado.classList.add("frente");
-    selecionado.classList.remove ("verso"); 
-    selecionado.classList.add("analise");
-    
-    verificaPar();
-
+    verifyPair();
   } else {
-    selecionado.classList.remove("analise");
-    selecionado.classList.remove("frente");
-    selecionado.classList.add ("verso");
-    
-  }
+    selected.classList.remove("review");
+    selected.classList.remove("front");
+    selected.classList.add ("back");
 
+    selected.setAttribute("data-identifier","back-face");
+  }
 }
 
-function verificaPar(){
+function verifyPair(){
 
-  cartasViradas = document.querySelectorAll(".analise");
+  turnedCards = document.querySelectorAll(".review");
 
-  if ( cartasViradas.length == 2 ){
+  if ( turnedCards.length === 2 ){
 
-    if ( cartasViradas[0].childNodes[1].getAttribute('src') == cartasViradas[1].childNodes[1].getAttribute('src') ){
+    if ( turnedCards[0].childNodes[1].getAttribute('src') === turnedCards[1].childNodes[1].getAttribute('src') ){
+      //Mark cards as a pair
+      turnedCards[0].classList.add("par");
+      turnedCards[1].classList.add("par");
+      //Remove cards from review
+      turnedCards[0].classList.remove("review");
+      turnedCards[1].classList.remove("review");
+      //Users can't click anymore
+      turnedCards[0].parentNode.setAttribute("onclick",null);
+      turnedCards[1].parentNode.setAttribute("onclick",null);
 
-      cartasViradas[0].classList.add("par");
-      cartasViradas[1].classList.add("par");
+      rightCards += 2;
 
-      cartasViradas[0].classList.remove("analise");
-      cartasViradas[1].classList.remove("analise");
-
-      cartasViradas[0].parentNode.setAttribute("onclick",null);
-      cartasViradas[1].parentNode.setAttribute("onclick",null);
-
-      cartasCorretas += 2;
-
-      if (cartasCorretas == numeroCartas) {
-        finalizarJogo();
+      if (rightCards === numCards) {
+        endGame();
       }
-
     } else{
-      setTimeout ( voltarCartas , 1000 ); 
+      setTimeout ( returnCards , 1000 ); 
     }
   } 
 }
 
-function voltarCartas(){
-  
-  cartasViradas[0].classList.remove("analise");
-  cartasViradas[0].classList.remove("frente");
-  cartasViradas[0].classList.add ("verso");
-
-  cartasViradas[1].classList.remove("analise");
-  cartasViradas[1].classList.remove("frente");
-  cartasViradas[1].classList.add ("verso");
-
-}
-
-function finalizarJogo(){
-
-  clearInterval(intervalo);
-  alert (`Você ganhou em ${numJogadas} jogadas!`);
-
-  let pergunta = prompt("Deseja reiniciar a partida? (Sim ou Não)");
-
-  if (pergunta.toUpperCase() === "SIM" || pergunta.toUpperCase() === "S"){
-    reiniciarJogo();
+function returnCards(){
+  for (let i=0; i < turnedCards.length; i++){
+    if ( turnedCards[i].classList.contains("review") ){
+      turnedCards[i].classList.remove("review");
+      turnedCards[i].classList.remove("front");
+      turnedCards[i].classList.add ("back");
+      
+      turnedCards[i].setAttribute("data-identifier","back-face");
+    }
   }
 }
 
-function iniciarJogo(){
-  numeroCartas   = 0;
-  numJogadas     = 0;
-  cartasCorretas = 0;
-  cartasViradas  = 0;
-  intervalo      = null;
-  contador.innerHTML = "0";
+function endGame(){
+  clearInterval(interval);
+  alert (`Você ganhou em ${numMoves} jogadas e em ${counter.innerHTML} segundos!`);
+  
+  let restart = prompt("Deseja reiniciar a partida? (Sim ou Não)");
+
+  if (restart.toUpperCase() === "SIM" || restart.toUpperCase() === "S"){
+    restartGame();
+  }
 }
 
-function reiniciarJogo(){
-  limparTelaJogo ();
-  exibirTelaInicial(); 
-  iniciarJogo();
-  validarNumeroCartas ();
-  contarTempo();
+function startGame(){
+  numCards      = 0;
+  numMoves      = 0;
+  rightCards    = 0;
+  turnedCards   = 0;
+  interval      = null;
+  counter.innerHTML = "0";
 }
 
-function contarTempo(){
-  intervalo = setInterval(contar,1000);
+function restartGame(){
+  clearGameBoard ();
+  showInitialBoard(); 
+  startGame();
+  validateNumCards();
+  countTime();
 }
 
-function contar(){
-  contador.innerHTML = parseInt(contador.innerHTML) + 1;
+function countTime(){
+  interval = setInterval(count,1000);
 }
 
-iniciarJogo();
-carregarTelaInicial();
-validarNumeroCartas ();
-contarTempo();
+function count(){
+  counter.innerHTML = parseInt(counter.innerHTML) + 1;
+}
+
+startGame();
+loadInitialBoard();
+validateNumCards();
+countTime();
